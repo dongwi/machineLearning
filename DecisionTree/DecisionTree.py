@@ -21,6 +21,7 @@ class DecisionTree:
             ent += self._calc_shannon_ent(ni / n)
         return ent
 
+    # 计算指定特征的信息熵
     def _split_feat_ent(self, feat_index, X, y):
         n = X.shape[0]
         feat = X[:, feat_index]
@@ -32,7 +33,20 @@ class DecisionTree:
             ent += (float(y_f_n) / n) * self._calc_shannon_en(y_f)
         return ent
 
-    def fit(self, dataset):
+    #
+    def _pick_feat(self, X, y):
+        min_feat_index = np.inf
+        min_ent = np.inf
+        for i in range(X.shape[1]):
+            ient = self._split_feat_ent(i, X, y)
+            if min_ent > ient:
+                min_ent = ient
+                min_feat_index = i
+        return min_feat_index
+
+
+    # 适配数据
+    def fit(self):
         X = np.array([[0, 0, 0, 0],
                       [0, 0, 0, 1],
                       [1, 0, 0, 0],
@@ -41,11 +55,10 @@ class DecisionTree:
                       [2, 2, 1, 1],
                       [1, 2, 1, 1]])
         y = np.array(['N', 'N', 'Y', 'Y', 'Y', 'N', 'Y'])
-        self._split_feat_ent(0, X, y)
+        self._pick_feat(X, y)
         return
 
 
 if __name__ == "__main__":
-    dataset = datasets.load_iris()
     dt = DecisionTree()
-    dt.fit(dataset)
+    dt.fit()
